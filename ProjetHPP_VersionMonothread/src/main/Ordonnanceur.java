@@ -27,9 +27,9 @@ public class Ordonnanceur {
 		currentPost= new Post();
 		currentComment= new Comment();
 		try {
-			filepost= new FileReader("/Users/jeredentan/Desktop/posts.txt");
+			filepost= new FileReader("/Users/Jeredentan/Desktop/posts.txt");
 			bufferedReaderpost   = new BufferedReader(filepost);
-			filecomment= new FileReader("/Users/jeredentan/Desktop/comments.txt");
+			filecomment= new FileReader("/Users/Jeredentan/Desktop/comments.txt");
 			bufferedReadercomment   = new BufferedReader(filecomment);
 
 			top3_posts.add(new Post());

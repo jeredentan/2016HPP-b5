@@ -8,8 +8,8 @@ import java.util.Date;
 public class Post {
 
 	private long ts;
-	private  int post_id;
-	private  int user_id;
+	private  long post_id;
+	private  long user_id;
 	private  String contenu_post;
 	private  String user;
 
@@ -30,10 +30,10 @@ public class Post {
 		String reste;
 		reste = line.substring(line.indexOf("|")+1,line.length());
 
-		this.post_id=Integer.parseInt(reste.substring(0,reste.indexOf("|")));
+		this.post_id=Long.parseLong(reste.substring(0,reste.indexOf("|")));
 		reste=reste.substring(reste.indexOf("|")+1,reste.length());
 
-		this.user_id=Integer.parseInt(reste.substring(0,reste.indexOf("|")));
+		this.user_id=Long.parseLong(reste.substring(0,reste.indexOf("|")));
 		reste=reste.substring(reste.indexOf("|")+1,reste.length());
 
 		this.contenu_post=reste.substring(0,reste.indexOf("|"));
@@ -109,7 +109,7 @@ public class Post {
 
 
 	}
-	public int getUser_id() {
+	public long getUser_id() {
 		return user_id;
 	}
 	public void setUser_id(int user_id) {
@@ -133,7 +133,7 @@ public class Post {
 	public void setTs(long ts) {
 		this.ts = ts;
 	}
-	public int getPost_id() {
+	public long getPost_id() {
 		return post_id;
 	}
 	public void setPost_id(int post_id) {

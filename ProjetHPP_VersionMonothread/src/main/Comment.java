@@ -27,11 +27,15 @@ public class Comment {
 	 * 2010-02-09T04:05:20.777+0000|529590|2886|LOL|Baoping Wu||529360
 	 * @param s
 	 */
-	public void loadFromString(String s){
+	public void loadFromString(String s1){
+
+		String s;
+		s=s1;
 
 
 			String time = s.substring(0,s.indexOf("|"));
-			s =  s.replace(time+"|","");
+			//s =  s.replace(time+"|","");
+			s=s.substring(s.indexOf("|")+1,s.length());
 			time = time.replace("T", " ");
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			try {
@@ -46,25 +50,25 @@ public class Comment {
 
 			this.comment_id = Long.parseLong(comment_id);
 
-			s =  s.replace(comment_id+"|","");
+			s=s.substring(s.indexOf("|")+1,s.length());
 
 			String user_id = s.substring(0, s.indexOf("|"));
 
 			this.user_id = Long.parseLong(user_id);
 
-			s =  s.replace(user_id+"|","");
+			s=s.substring(s.indexOf("|")+1,s.length());
 
 			String comment = s.substring(0, s.indexOf("|"));
 
 			this.comment = comment;
 
-			s =  s.replace(comment+"|","");
+			s=s.substring(s.indexOf("|")+1,s.length());
 
 			String user = s.substring(0, s.indexOf("|"));
 
 			this.user = user;
 
-			s =  s.replace(user+"|","");
+			s=s.substring(s.indexOf("|")+1,s.length());
 
 			String comment_replied = s.substring(0, s.indexOf("|"));
 
@@ -75,7 +79,7 @@ public class Comment {
 			this.comment_replied = 0;
 			}
 
-			s =  s.replace(comment_replied+"|","");
+			s=s.substring(s.indexOf("|")+1,s.length());
 
 			String post_commented = s;
 
