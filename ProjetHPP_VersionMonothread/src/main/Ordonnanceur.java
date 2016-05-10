@@ -94,15 +94,9 @@ public class Ordonnanceur {
 
 				}
 			}
-
-
 			// A la fin on sort le top3 des scores
 			// Si il est différent du précédent, on le change dans le fichier text de top3
-
-
 		}while(lire(lirepost,lirecommentaire));
-
-
 	}
 
 
@@ -111,12 +105,11 @@ public class Ordonnanceur {
 		Post top1= new Post();
 		Post top2= new Post();
 		Post top3= new Post();
-
+		System.out.println("posts : "+posts);
+		System.out.println("top3 = "+top3);
 		for(int i=0;i<this.posts.size();i++){
 			if(posts.get(i).getPost_score()>top1.getPost_score()){
 				top1=posts.get(i);
-
-
 			}else{
 				if(posts.get(i).getPost_score()>top2.getPost_score()){
 					top2=posts.get(i);
@@ -131,7 +124,7 @@ public class Ordonnanceur {
 		listtop3.add(top1);
 		listtop3.add(top2);
 		listtop3.add(top3);
-//System.out.println(listtop3);
+		//System.out.println(listtop3);
 
 		return listtop3;
 	}
