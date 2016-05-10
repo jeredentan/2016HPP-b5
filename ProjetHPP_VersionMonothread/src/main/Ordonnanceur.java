@@ -105,22 +105,73 @@ public class Ordonnanceur {
 		Post top1= new Post();
 		Post top2= new Post();
 		Post top3= new Post();
-		System.out.println("posts : "+posts);
-		System.out.println("top3 = "+top3);
+		//System.out.println("posts : "+posts);
+		//System.out.println("top3 = "+top3);
 		for(int i=0;i<this.posts.size();i++){
 			if(posts.get(i).getPost_score()>top1.getPost_score()){
 				top1=posts.get(i);
 			}else{
-				if(posts.get(i).getPost_score()>top2.getPost_score()){
-					top2=posts.get(i);
-				}else{
-					if(posts.get(i).getPost_score()>top3.getPost_score()){
+				if(posts.get(i).getPost_score()==top1.getPost_score()){
+					if(posts.get(i).getTs()>top1.getTs()){
+						top1=posts.get(i);
+					}
+
+					if(posts.get(i).getTs()==top1.getTs() ){
+				if(	posts.get(i).getComments_associes().size()>top1.getComments_associes().size()){
+						top1=posts.get(i);
+				}
+
+					}
+
+				}
+			}
+		}
+		for(int i=0;i<this.posts.size();i++){
+			if(posts.get(i).getPost_score()>top2.getPost_score() && posts.get(i).getPost_id() != top1.getPost_id()){
+				top2=posts.get(i);
+			}else{
+				if(posts.get(i).getPost_score()==top2.getPost_score()){
+					if(posts.get(i).getTs()>top2.getTs() ){
+						top2=posts.get(i);
+					}
+					if(posts.get(i).getTs()==top2.getTs() ){
+				if(	posts.get(i).getComments_associes().size()>top2.getComments_associes().size()){
+						top2=posts.get(i);
+				}
+
+					}
+
+				}
+			}
+
+
+
+		}
+
+
+		for(int i=0;i<this.posts.size();i++){
+			if(posts.get(i).getPost_score()>top3.getPost_score() && posts.get(i).getPost_id() != top2.getPost_id() && posts.get(i).getPost_id() != top1.getPost_id()){
+				top3=posts.get(i);
+			}else{
+				if(posts.get(i).getPost_score()==top3.getPost_score()){
+					if(posts.get(i).getTs()>top3.getTs() ){
 						top3=posts.get(i);
+					}
+					if(posts.get(i).getTs()==top3.getTs() ){
+				if(	posts.get(i).getComments_associes().size()>top3.getComments_associes().size()){
+						top3=posts.get(i);
+				}
+
 					}
 				}
 			}
 
+
+
+
 		}
+
+
 		listtop3.add(top1);
 		listtop3.add(top2);
 		listtop3.add(top3);
