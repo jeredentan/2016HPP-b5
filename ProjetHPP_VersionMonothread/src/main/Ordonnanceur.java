@@ -27,9 +27,9 @@ public class Ordonnanceur {
 		currentPost= new Post();
 		currentComment= new Comment();
 		try {
-			filepost= new FileReader("posts.txt");
+			filepost= new FileReader("/Users/jeredentan/Desktop/posts.txt");
 			bufferedReaderpost   = new BufferedReader(filepost);
-			filecomment= new FileReader("comments.txt");
+			filecomment= new FileReader("/Users/jeredentan/Desktop/comments.txt");
 			bufferedReadercomment   = new BufferedReader(filecomment);
 
 			top3_posts.add(new Post());
@@ -65,9 +65,6 @@ public class Ordonnanceur {
 				this.posts.add(p);
 				// ==> On reparcoure les tableaux de posts et comments pour mettre à jour les scores en fonction du temps écoulé (comparaison temps systeme/dates).
 				this.updateScore();
-
-
-
 			}else{
 				lirepost=false;
 				lirecommentaire=true;
@@ -143,9 +140,6 @@ public class Ordonnanceur {
 
 				}
 			}
-
-
-
 		}
 
 
@@ -165,10 +159,6 @@ public class Ordonnanceur {
 					}
 				}
 			}
-
-
-
-
 		}
 
 
