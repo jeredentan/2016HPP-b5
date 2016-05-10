@@ -1,4 +1,4 @@
-package main;
+package versionperformante;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -6,11 +6,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Ordonnanceur {
-	public static ArrayList<Post> posts = new ArrayList<Post>();
-
-	public static ArrayList<Comment> comments = new ArrayList<Comment>();
+	//public static ArrayList<Post> posts = new ArrayList<Post>();
+public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
+	public static HashMap<Long,Comment> comments = new HashMap<Long,Comment>();
 	public static ArrayList<Post> top3_posts= new ArrayList<Post>();
 	private long Date;
 	private Post currentPost;
@@ -65,7 +66,8 @@ public class Ordonnanceur {
 				//Si le post est le plus vieux, on le rajoute au tableau de Posts
 				Post p = new Post();
 				p.affecter(this.currentPost);
-				this.posts.add(p);
+				this.posts.put(p.getPost_id(),p);
+				//this.posts.add(p);
 				// ==> On reparcoure les tableaux de posts et comments pour mettre à jour les scores en fonction du temps écoulé (comparaison temps systeme/dates).
 				this.updateScore();
 			}else{
@@ -123,18 +125,29 @@ public class Ordonnanceur {
 		Post top3= new Post();
 		//System.out.println("posts : "+posts);
 		//System.out.println("top3 = "+top3);
-		for(int i=0;i<this.posts.size();i++){
-			if(posts.get(i).getPost_score()>top1.getPost_score()){
-				top1=posts.get(i);
+
+
+
+
+
+
+
+
+
+		for (HashMap.Entry<Long, Post> entry : posts.entrySet()){
+
+
+			if(entry.getValue().getPost_score()>top1.getPost_score()){
+				top1=entry.getValue();
 			}else{
-				if(posts.get(i).getPost_score()==top1.getPost_score()){
-					if(posts.get(i).getTs()>top1.getTs()){
-						top1=posts.get(i);
+				if(entry.getValue().getPost_score()==top1.getPost_score()){
+					if(entry.getValue().getTs()>top1.getTs()){
+						top1=entry.getValue();
 					}
 
-					if(posts.get(i).getTs()==top1.getTs() ){
-				if(	posts.get(i).getComments_associes().size()>top1.getComments_associes().size()){
-						top1=posts.get(i);
+					if(entry.getValue().getTs()==top1.getTs() ){
+				if(	entry.getValue().getComments_associes().size()>top1.getComments_associes().size()){
+						top1=entry.getValue();
 				}
 
 					}
@@ -142,17 +155,41 @@ public class Ordonnanceur {
 				}
 			}
 		}
-		for(int i=0;i<this.posts.size();i++){
-			if(posts.get(i).getPost_score()>top2.getPost_score() && posts.get(i).getPost_id() != top1.getPost_id()){
-				top2=posts.get(i);
+		for (HashMap.Entry<Long, Post> entry : posts.entrySet()){
+
+
+			if(entry.getValue().getPost_score()>top2.getPost_score() && entry.getValue().getPost_id()!=top1.getPost_id()){
+				top2=entry.getValue();
 			}else{
-				if(posts.get(i).getPost_score()==top2.getPost_score()){
-					if(posts.get(i).getTs()>top2.getTs() ){
-						top2=posts.get(i);
+				if(entry.getValue().getPost_score()==top2.getPost_score()  && entry.getValue().getPost_id()!=top1.getPost_id()){
+					if(entry.getValue().getTs()>top1.getTs()){
+						top2=entry.getValue();
 					}
-					if(posts.get(i).getTs()==top2.getTs() ){
-				if(	posts.get(i).getComments_associes().size()>top2.getComments_associes().size()){
-						top2=posts.get(i);
+
+					if(entry.getValue().getTs()==top2.getTs() ){
+				if(	entry.getValue().getComments_associes().size()>top2.getComments_associes().size() && entry.getValue().getPost_id()!=top1.getPost_id()){
+						top2=entry.getValue();
+				}
+
+					}
+
+				}
+			}
+		}
+		for (HashMap.Entry<Long, Post> entry : posts.entrySet()){
+
+
+			if(entry.getValue().getPost_score()>top3.getPost_score() && entry.getValue().getPost_id()!=top1.getPost_id() && entry.getValue().getPost_id()!=top2.getPost_id()){
+				top3=entry.getValue();
+			}else{
+				if(entry.getValue().getPost_score()==top3.getPost_score()  && entry.getValue().getPost_id()!=top1.getPost_id() && entry.getValue().getPost_id()!=top2.getPost_id()){
+					if(entry.getValue().getTs()>top1.getTs()){
+						top3=entry.getValue();
+					}
+
+					if(entry.getValue().getTs()==top3.getTs() ){
+				if(	entry.getValue().getComments_associes().size()>top3.getComments_associes().size() && entry.getValue().getPost_id()!=top1.getPost_id() && entry.getValue().getPost_id()!=top2.getPost_id()){
+						top3=entry.getValue();
 				}
 
 					}
@@ -161,24 +198,6 @@ public class Ordonnanceur {
 			}
 		}
 
-
-		for(int i=0;i<this.posts.size();i++){
-			if(posts.get(i).getPost_score()>top3.getPost_score() && posts.get(i).getPost_id() != top2.getPost_id() && posts.get(i).getPost_id() != top1.getPost_id()){
-				top3=posts.get(i);
-			}else{
-				if(posts.get(i).getPost_score()==top3.getPost_score()){
-					if(posts.get(i).getTs()>top3.getTs() ){
-						top3=posts.get(i);
-					}
-					if(posts.get(i).getTs()==top3.getTs() ){
-				if(	posts.get(i).getComments_associes().size()>top3.getComments_associes().size()){
-						top3=posts.get(i);
-				}
-
-					}
-				}
-			}
-		}
 
 
 		listtop3.add(top1);
@@ -215,22 +234,20 @@ public class Ordonnanceur {
 		long postreplied = 0;
 		Comment com = new Comment();
 		com.affecter(this.currentComment);
+		this.comments.put(com.getComment_id(), com);
 
-		this.comments.add(com);
 		if(this.currentComment.getPost_commented()==0){
 
 			commentreplied=this.currentComment.getComment_replied();
 			// Cherche le commentaire avec cet ID et lui ajouter la ligne du tableau comments correspondante
-			for(int i=0;i<comments.size();i++){
-				if(comments.get(i).getComment_id()==commentreplied){
-					comments.get(i).getComments_associes().add(comments.size()-1);
-				}
-			}
+
+					comments.get(commentreplied).getComments_associes().add(currentComment.getComment_id());
+
 		}else{
-			for(int i=0;i<posts.size();i++){
+			for (HashMap.Entry<Long, Post> entry : posts.entrySet()){
 				postreplied=this.currentComment.getPost_commented();
-				if(posts.get(i).getPost_id()==postreplied){
-					posts.get(i).getComments_associes().add(comments.size()-1);
+				if(entry.getValue().getPost_id()==postreplied){
+					entry.getValue().getComments_associes().add(currentComment.getComment_id());
 				}
 			}
 
@@ -239,9 +256,14 @@ public class Ordonnanceur {
 
 	private void  updateScore(){
 		// Met à jour les scores des posts
-		for(int i=0;i<posts.size();i++){
-			this.posts.get(i).calculScore(Date);
+		for (HashMap.Entry<Long, Post> entry : posts.entrySet())
+		{
+
+		   entry.getValue().calculScore(Date);
 		}
+
+			//this.posts.get(i).calculScore(Date);
+
 
 
 	}
