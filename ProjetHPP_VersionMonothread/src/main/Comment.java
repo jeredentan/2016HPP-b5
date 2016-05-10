@@ -33,7 +33,7 @@ public class Comment {
 			String time = s.substring(0,s.indexOf("|"));
 			s =  s.replace(time+"|","");
 			time = time.replace("T", " ");
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			try {
 				ts = dateFormat.parse(time).getTime();
 

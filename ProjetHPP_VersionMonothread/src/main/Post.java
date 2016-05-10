@@ -21,46 +21,46 @@ public class Post {
 
 
 
-//----------- Découpage de la ligne
-	String timstamp;
+		//----------- Découpage de la ligne
+		String timstamp;
 
-	timstamp = line.substring(0,line.indexOf("|"));
-
-
-	String reste;
-	reste = line.substring(line.indexOf("|")+1,line.length());
-
-this.post_id=Integer.parseInt(reste.substring(0,reste.indexOf("|")));
-	reste=reste.substring(reste.indexOf("|")+1,reste.length());
-
-	this.user_id=Integer.parseInt(reste.substring(0,reste.indexOf("|")));
-	reste=reste.substring(reste.indexOf("|")+1,reste.length());
-
-	this.contenu_post=reste.substring(0,reste.indexOf("|"));
-	reste=reste.substring(reste.indexOf("|")+1,reste.length());
+		timstamp = line.substring(0,line.indexOf("|"));
 
 
-this.user=reste.substring(0,reste.length());
-	reste=reste.substring(reste.indexOf("|")+1,reste.length());
+		String reste;
+		reste = line.substring(line.indexOf("|")+1,line.length());
+
+		this.post_id=Integer.parseInt(reste.substring(0,reste.indexOf("|")));
+		reste=reste.substring(reste.indexOf("|")+1,reste.length());
+
+		this.user_id=Integer.parseInt(reste.substring(0,reste.indexOf("|")));
+		reste=reste.substring(reste.indexOf("|")+1,reste.length());
+
+		this.contenu_post=reste.substring(0,reste.indexOf("|"));
+		reste=reste.substring(reste.indexOf("|")+1,reste.length());
 
 
-//----\Fin dsécoupage de la ligne
+		this.user=reste.substring(0,reste.length());
+		reste=reste.substring(reste.indexOf("|")+1,reste.length());
+
+
+		//----\Fin dsécoupage de la ligne
 
 
 
-// ---- Conversion en Date------
+		// ---- Conversion en Date------
 
-	try{
-		timstamp=timstamp.replace("T", " ");
-	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-	   Date parsedDate = dateFormat.parse(timstamp);
-this.ts=parsedDate.getTime();
-	  // Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+		try{
+			timstamp=timstamp.replace("T", " ");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+			Date parsedDate = dateFormat.parse(timstamp);
+			this.ts=parsedDate.getTime();
+			// Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
 
-	}catch(Exception e){//this generic but you can control another types of exception
-				System.out.println(e);
-	}
-//-------\Fin conversion en date
+		}catch(Exception e){//this generic but you can control another types of exception
+			System.out.println(e);
+		}
+		//-------\Fin conversion en date
 	}
 
 
@@ -70,16 +70,15 @@ this.ts=parsedDate.getTime();
 			return 0;
 		}else{
 			int score=10;
-			int nb_jour=(int)((tempsSysteme-ts)/86_400_000);
+			long nb_jour=((tempsSysteme-ts)/86_400_000);
 
 			score-=nb_jour;
+			//System.out.println(nb_jour);
 			for(int i=0;i<comments_associes.size();i++){
 				score+=(Ordonnanceur.comments.get(comments_associes.get(i))).calculScore(tempsSysteme);
-
-
 			}
 			this.post_score=score;
-				return score;
+			return score;
 		}
 	}
 
@@ -151,12 +150,12 @@ this.ts=parsedDate.getTime();
 
 
 	public void affecter(Post currentPost) {
-this.contenu_post=currentPost.getPost();
-this.post_id=currentPost.getPost_id();
-this.ts=currentPost.getTs();
-this.user=currentPost.getUser();
-this.user_id=currentPost.getUser_id();
-this.post_score=10;
+		this.contenu_post=currentPost.getPost();
+		this.post_id=currentPost.getPost_id();
+		this.ts=currentPost.getTs();
+		this.user=currentPost.getUser();
+		this.user_id=currentPost.getUser_id();
+		this.post_score=10;
 
 	}
 }
