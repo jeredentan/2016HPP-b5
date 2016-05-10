@@ -84,9 +84,6 @@ lire(lirepost,lirecommentaire);
 		/*System.out.println(d);
 		System.out.println(posts);*/
 
-
-
-
 	 			ArrayList<Post> listepost = chercher_top3();
 	 				if(comparertop3(listepost)==false){
 	 					//System.out.println(top3_posts);
