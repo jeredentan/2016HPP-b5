@@ -77,6 +77,11 @@ public class Post {
 			for(int i=0;i<comments_associes.size();i++){
 				score+=(Ordonnanceur.comments.get(comments_associes.get(i))).calculScore(tempsSysteme);
 			}
+
+
+
+
+
 			this.post_score=score;
 			return score;
 		}

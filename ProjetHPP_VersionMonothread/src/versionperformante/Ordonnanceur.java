@@ -7,10 +7,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class Ordonnanceur {
 	//public static ArrayList<Post> posts = new ArrayList<Post>();
-public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
+	public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
 	public static HashMap<Long,Comment> comments = new HashMap<Long,Comment>();
 	public static ArrayList<Post> top3_posts= new ArrayList<Post>();
 	private long Date;
@@ -48,6 +49,7 @@ public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
 	}
 
 	public void traitement(){
+		ArrayList<Post> listepost= new ArrayList<Post>();
 		long t1= System.currentTimeMillis();
 		boolean lirepost=true;
 		boolean lirecommentaire=true;
@@ -69,7 +71,7 @@ public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
 				this.posts.put(p.getPost_id(),p);
 				//this.posts.add(p);
 				// ==> On reparcoure les tableaux de posts et comments pour mettre à jour les scores en fonction du temps écoulé (comparaison temps systeme/dates).
-				this.updateScore();
+				listepost=this.updateScore();
 			}else{
 				lirepost=false;
 				lirecommentaire=true;
@@ -80,13 +82,13 @@ public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
 
 				ajouter_commentaire();
 				//On recalcule les scores
-				this.updateScore();
+				listepost=	this.updateScore();
 			}
 
 			/*System.out.println(d);
 		System.out.println(posts);*/
 
-			ArrayList<Post> listepost = chercher_top3();
+
 			if(comparertop3(listepost)==false){
 				/*Date da= new Date(Date);
 				System.out.println(da);
@@ -109,12 +111,12 @@ public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
 			// Si il est différent du précédent, on le change dans le fichier text de top3
 		}while(lire(lirepost,lirecommentaire));
 		Date da= new Date(Date);
-		System.out.println(da);
+		/*System.out.println(da);
 		for(int i=0;i<top3_posts.size();i++){
 		System.out.println(top3_posts.get(i));
 
 
-		}
+		}*/
 	}
 
 
@@ -125,14 +127,6 @@ public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
 		Post top3= new Post();
 		//System.out.println("posts : "+posts);
 		//System.out.println("top3 = "+top3);
-
-
-
-
-
-
-
-
 
 		for (HashMap.Entry<Long, Post> entry : posts.entrySet()){
 
@@ -146,9 +140,9 @@ public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
 					}
 
 					if(entry.getValue().getTs()==top1.getTs() ){
-				if(	entry.getValue().getComments_associes().size()>top1.getComments_associes().size()){
-						top1=entry.getValue();
-				}
+						if(	entry.getValue().getComments_associes().size()>top1.getComments_associes().size()){
+							top1=entry.getValue();
+						}
 
 					}
 
@@ -167,9 +161,9 @@ public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
 					}
 
 					if(entry.getValue().getTs()==top2.getTs() ){
-				if(	entry.getValue().getComments_associes().size()>top2.getComments_associes().size() && entry.getValue().getPost_id()!=top1.getPost_id()){
-						top2=entry.getValue();
-				}
+						if(	entry.getValue().getComments_associes().size()>top2.getComments_associes().size() && entry.getValue().getPost_id()!=top1.getPost_id()){
+							top2=entry.getValue();
+						}
 
 					}
 
@@ -188,9 +182,9 @@ public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
 					}
 
 					if(entry.getValue().getTs()==top3.getTs() ){
-				if(	entry.getValue().getComments_associes().size()>top3.getComments_associes().size() && entry.getValue().getPost_id()!=top1.getPost_id() && entry.getValue().getPost_id()!=top2.getPost_id()){
-						top3=entry.getValue();
-				}
+						if(	entry.getValue().getComments_associes().size()>top3.getComments_associes().size() && entry.getValue().getPost_id()!=top1.getPost_id() && entry.getValue().getPost_id()!=top2.getPost_id()){
+							top3=entry.getValue();
+						}
 
 					}
 
@@ -241,7 +235,7 @@ public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
 			commentreplied=this.currentComment.getComment_replied();
 			// Cherche le commentaire avec cet ID et lui ajouter la ligne du tableau comments correspondante
 
-					comments.get(commentreplied).getComments_associes().add(currentComment.getComment_id());
+			comments.get(commentreplied).getComments_associes().add(currentComment.getComment_id());
 
 		}else{
 			for (HashMap.Entry<Long, Post> entry : posts.entrySet()){
@@ -254,17 +248,97 @@ public static HashMap<Long,Post> posts = new HashMap<Long,Post>();
 		}
 	}
 
-	private void  updateScore(){
+	public void update_top3(ArrayList<Post> top3_post,Entry<Long, Post> entry,int score){
+
+		if(score>top3_post.get(0).getPost_score()){
+			top3_post.add(0, entry.getValue());
+			top3_post.remove(3);
+		}else{
+			if(score==top3_post.get(0).getPost_score()){
+				if(entry.getValue().getTs()>top3_post.get(0).getTs()){
+					top3_post.add(0, entry.getValue());
+					top3_post.remove(3);
+				}
+
+				if(entry.getValue().getTs()==top3_post.get(0).getTs() ){
+					if(	entry.getValue().getComments_associes().size()>top3_post.get(0).getComments_associes().size()){
+						top3_post.add(0, entry.getValue());
+						top3_post.remove(3);
+					}
+
+				}
+
+			}else{
+				if(score>top3_post.get(1).getPost_score()){
+					top3_post.add(1, entry.getValue());
+					top3_post.remove(3);
+				}else{
+					if(score==top3_post.get(0).getPost_score()){
+						if(entry.getValue().getTs()>top3_post.get(1).getTs()){
+							top3_post.add(1, entry.getValue());
+							top3_post.remove(3);
+						}
+
+						if(entry.getValue().getTs()==top3_post.get(1).getTs() ){
+							if(	entry.getValue().getComments_associes().size()>top3_post.get(1).getComments_associes().size()){
+								top3_post.add(1, entry.getValue());
+								top3_post.remove(3);
+							}
+
+						}
+
+					}else{
+						if(score>top3_post.get(2).getPost_score()){
+							top3_post.add(2, entry.getValue());
+							top3_post.remove(3);
+						}else{
+							if(score==top3_post.get(0).getPost_score()){
+								if(entry.getValue().getTs()>top3_post.get(2).getTs()){
+									top3_post.add(2, entry.getValue());
+									top3_post.remove(3);
+								}
+
+								if(entry.getValue().getTs()==top3_post.get(2).getTs() ){
+									if(	entry.getValue().getComments_associes().size()>top3_post.get(2).getComments_associes().size()){
+										top3_post.add(2, entry.getValue());
+										top3_post.remove(3);
+									}
+
+								}
+
+							}
+						}
+
+					}
+				}
+			}
+		}
+
+	}
+
+
+
+
+
+
+	public ArrayList<Post> updateScore(){
 		// Met à jour les scores des posts
+		int score;
+		ArrayList<Post> top3_post = new ArrayList<Post>();
+		top3_post.add(new Post());
+		top3_post.add(new Post());
+		top3_post.add(new Post());
+
 		for (HashMap.Entry<Long, Post> entry : posts.entrySet())
 		{
 
-		   entry.getValue().calculScore(Date);
+			score=  entry.getValue().calculScore(Date);
+			update_top3(top3_post,entry,score);
 		}
 
-			//this.posts.get(i).calculScore(Date);
 
 
+		return top3_post;
 
 	}
 	private boolean postisolder()
