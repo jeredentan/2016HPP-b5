@@ -38,8 +38,6 @@ public class Post {
 
 		this.contenu_post=reste.substring(0,reste.indexOf("|"));
 		reste=reste.substring(reste.indexOf("|")+1,reste.length());
-
-
 		this.user=reste.substring(0,reste.length());
 		reste=reste.substring(reste.indexOf("|")+1,reste.length());
 
@@ -74,12 +72,14 @@ public class Post {
 
 			score-=nb_jour;
 			//System.out.println(nb_jour);
+
 			for(int i=0;i<comments_associes.size();i++){
+
 				score+=(Ordonnanceur.comments.get(comments_associes.get(i))).calculScore(tempsSysteme);
+				if(score==0){
+					comments_associes.remove(i);
+				}
 			}
-
-
-
 
 
 			this.post_score=score;

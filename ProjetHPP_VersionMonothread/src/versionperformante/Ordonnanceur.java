@@ -324,16 +324,17 @@ public class Ordonnanceur {
 		top3_post.add(new Post());
 		top3_post.add(new Post());
 		top3_post.add(new Post());
-
+		Post p= new Post();
 		for (int i=0;i<postsbis.size();i++)
 		{
 
-			score=  postsbis.get(i).calculScore(Date);
+			p=postsbis.get(i);
+			score=  p.calculScore(Date);
 			if(score==0){
-				posts.remove(postsbis.get(i));
+				postsbis.remove(p);
 			}
 
-			update_top3(top3_post,postsbis.get(i),score);
+			update_top3(top3_post,p,score);
 		}
 
 		return top3_post;
