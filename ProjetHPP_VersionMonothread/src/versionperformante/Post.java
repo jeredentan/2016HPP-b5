@@ -5,8 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.joda.time.DateTime;
-
 public class Post {
 
 	private long ts;
@@ -20,10 +18,14 @@ public class Post {
 
 
 	public  void loadFromString(String line) throws IOException{
+
+
+
 		//----------- Découpage de la ligne
 		String timstamp;
 
 		timstamp = line.substring(0,line.indexOf("|"));
+
 
 		String reste;
 		reste = line.substring(line.indexOf("|")+1,line.length());
@@ -38,15 +40,19 @@ public class Post {
 		reste=reste.substring(reste.indexOf("|")+1,reste.length());
 		this.user=reste.substring(0,reste.length());
 		reste=reste.substring(reste.indexOf("|")+1,reste.length());
+
+
 		//----\Fin dsécoupage de la ligne
+
+
+
 		// ---- Conversion en Date------
 
 		try{
 			timstamp=timstamp.replace("T", " ");
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 			Date parsedDate = dateFormat.parse(timstamp);
-			DateTime dt=new DateTime(parsedDate);
-			this.ts=dt.getMillis();
+			this.ts=parsedDate.getTime();
 			// Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
 
 		}catch(Exception e){//this generic but you can control another types of exception
@@ -66,6 +72,7 @@ public class Post {
 
 			score-=nb_jour;
 			//System.out.println(nb_jour);
+
 			for(int i=0;i<comments_associes.size();i++){
 
 				score+=(Ordonnanceur.comments.get(comments_associes.get(i))).calculScore(tempsSysteme);
@@ -73,6 +80,8 @@ public class Post {
 					comments_associes.remove(i);
 				}
 			}
+
+
 			this.post_score=score;
 			return score;
 		}

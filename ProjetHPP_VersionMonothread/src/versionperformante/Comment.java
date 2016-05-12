@@ -3,9 +3,6 @@ package versionperformante;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-
-import org.joda.time.DateTime;
 
 /**
  * Classe permettant de contenir un commentaire
@@ -40,9 +37,8 @@ public class Comment {
 		time = time.replace("T", " ");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
-			Date parsedDate = dateFormat.parse(time);
-			DateTime dt=new DateTime(parsedDate);
-			this.ts=dt.getMillis();
+			ts = dateFormat.parse(time).getTime();
+
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -120,6 +116,9 @@ public class Comment {
 		this.user=comment.getUser();
 		this.user_id=comment.getUser_id();
 		this.post_commented=comment.getPost_commented();
+
+
+
 	}
 
 

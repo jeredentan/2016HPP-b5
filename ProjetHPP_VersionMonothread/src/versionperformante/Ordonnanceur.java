@@ -31,8 +31,10 @@ public class Ordonnanceur {
 		currentComment= new Comment();
 		try {
 			filepost= new FileReader("/Users/Jeredentan/Desktop/posts.txt");
+			//filepost= new FileReader("D:/Temp/data/posts.txt");
 			bufferedReaderpost   = new BufferedReader(filepost);
 			filecomment= new FileReader("/Users/Jeredentan/Desktop/comments.txt");
+			//filecomment= new FileReader("D:/Temp/data/comments.txt");
 			bufferedReadercomment   = new BufferedReader(filecomment);
 
 			top3_posts.add(new Post());
@@ -318,7 +320,15 @@ public class Ordonnanceur {
 			update_top3(top3_posts,currentPost,score);
 		}else{
 			Post p = new Post();
-			t=currentComment.getPost_commented();
+			long id;
+			Comment comment = new Comment();
+			comment=currentComment;
+			t=comment.getPost_commented();
+			while(t==0){
+				id=comment.getComment_replied();
+				comment=comments.get(id);
+				t=comment.getPost_commented();
+			}
 			p=posts.get(t);
 			score=p.calculScore(Date);
 			update_top3(top3_posts,p,score);
