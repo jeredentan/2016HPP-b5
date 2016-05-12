@@ -43,12 +43,10 @@ public class Ordonnanceur {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
 	}
 
 	public void traitement(){
-		ArrayList<Post> listepost= new ArrayList<Post>();
+		boolean changetop3=false;
 		long t1= System.currentTimeMillis();
 		boolean lirepost=true;
 		boolean lirecommentaire=true;
@@ -63,37 +61,24 @@ public class Ordonnanceur {
 				//Si le post est le plus vieux, on le rajoute au tableau de Posts
 				Post p = new Post();
 				p.affecter(this.currentPost);
-				this.postsbis.add(p);
-				this.posts.put(p.getPost_id(),p);
-				//this.posts.add(p);
+				Ordonnanceur.postsbis.add(p);
+				Ordonnanceur.posts.put(p.getPost_id(),p);
 				// ==> On reparcoure les tableaux de posts et comments pour mettre à jour les scores en fonction du temps écoulé (comparaison temps systeme/dates).
-				listepost=this.updateScore();
+				changetop3=this.updateScore(true);
 			}else{
 				lirepost=false;
 				lirecommentaire=true;
 				//On extrait la date
 				Date=this.currentComment.getTs();
-
 				//Si c'est un commentaire, on le rajoute dans le tableau des commentaires et on augmente le score de tous les commentaires et du post associés
-
 				ajouter_commentaire();
 				//On recalcule les scores
-				listepost=	this.updateScore();
+				changetop3=	this.updateScore(false);
 			}
-
 			/*System.out.println(d);
 		System.out.println(posts);*/
+			if(changetop3==true){
 
-
-			if(comparertop3(listepost)==false){
-				/*Date da= new Date(Date);
-				System.out.println(da);
-				for(int i=0;i<top3_posts.size();i++){
-					System.out.println(top3_posts.get(i));
-
-
-
-				}*/
 
 			}
 
@@ -110,8 +95,6 @@ public class Ordonnanceur {
 		System.out.println(da);
 		for(int i=0;i<top3_posts.size();i++){
 		System.out.println(top3_posts.get(i));
-
-
 		}*/
 	}
 
@@ -197,9 +180,6 @@ public class Ordonnanceur {
 
 		return listtop3;
 	}*/
-
-
-
 	private boolean comparertop3(ArrayList<Post> liste){
 
 
@@ -210,13 +190,7 @@ public class Ordonnanceur {
 			top3_posts=liste;
 			return false;
 		}
-
-
-
 	}
-
-
-
 
 
 
@@ -236,12 +210,20 @@ public class Ordonnanceur {
 			comments.get(commentreplied).getComments_associes().add(currentComment.getComment_id());
 
 		}else{
-			for (HashMap.Entry<Long, Post> entry : posts.entrySet()){
+			/*for (HashMap.Entry<Long, Post> entry : posts.entrySet()){
 				postreplied=this.currentComment.getPost_commented();
+
 				if(entry.getValue().getPost_id()==postreplied){
 					entry.getValue().getComments_associes().add(currentComment.getComment_id());
 				}
+			}*/
+			postreplied=this.currentComment.getPost_commented();
+
+			if(nbcomm>240_000 ){
+				System.out.println(postreplied);
 			}
+			posts.get(postreplied).getComments_associes().add(currentComment.getComment_id());
+
 
 		}
 	}
@@ -317,8 +299,65 @@ public class Ordonnanceur {
 
 
 
-	public ArrayList<Post> updateScore(){
-		// Met à jour les scores des posts
+	public boolean updateScore(boolean ispost){
+		boolean change = false;
+		int scoretop3;
+		long t;
+		int score;
+		//1- Mise à hour top 3 pour virer les obsolètes
+		for(int i=0;i<3;i++){
+			scoretop3=top3_posts.get(i).calculScore(Date);
+			if(scoretop3==0){
+				change =true;
+			}
+		}
+
+		//2 - Cacul du score pour post/commentaire(faire en sorte de pas calculer tt le tps)
+		if(ispost){
+			score=currentPost.calculScore(Date);
+			update_top3(top3_posts,currentPost,score);
+		}else{
+			Post p = new Post();
+			t=currentComment.getPost_commented();
+			p=posts.get(t);
+			score=p.calculScore(Date);
+			update_top3(top3_posts,p,score);
+		}
+			//Naif
+		for(int i=0;i<top3_posts.size();i++){
+			if(top3_posts.get(i).getPost_score()==0){
+				change=true;
+			}
+
+		}
+
+		if(change){
+			Post p= new Post();
+			for (int i=0;i<postsbis.size();i++)
+			{
+
+				p=postsbis.get(i);
+				score=  p.calculScore(Date);
+				if(score==0){
+					postsbis.remove(p);
+				}
+
+				update_top3(top3_posts,p,score);
+			}
+		}
+
+
+
+
+
+		//3 - Si top 3 pas complet, aller repêcher les posts entrant dans le top3
+
+
+
+
+
+
+		/*
 		int score;
 		ArrayList<Post> top3_post = new ArrayList<Post>();
 		top3_post.add(new Post());
@@ -336,8 +375,8 @@ public class Ordonnanceur {
 
 			update_top3(top3_post,p,score);
 		}
-
-		return top3_post;
+		 */
+		return change;
 
 	}
 
@@ -411,10 +450,4 @@ public class Ordonnanceur {
 		}
 		return true;
 	}
-
-
-
-
-
 }
-

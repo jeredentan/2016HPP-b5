@@ -3,6 +3,9 @@ package versionperformante;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
+import org.joda.time.DateTime;
 
 /**
  * Classe permettant de contenir un commentaire
@@ -31,64 +34,63 @@ public class Comment {
 
 		String s;
 		s=s1;
+		String time = s.substring(0,s.indexOf("|"));
+		//s =  s.replace(time+"|","");
+		s=s.substring(s.indexOf("|")+1,s.length());
+		time = time.replace("T", " ");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			Date parsedDate = dateFormat.parse(time);
+			DateTime dt=new DateTime(parsedDate);
+			this.ts=dt.getMillis();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+		String comment_id = s.substring(0, s.indexOf("|"));
 
-			String time = s.substring(0,s.indexOf("|"));
-			//s =  s.replace(time+"|","");
-			s=s.substring(s.indexOf("|")+1,s.length());
-			time = time.replace("T", " ");
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			try {
-				ts = dateFormat.parse(time).getTime();
+		this.comment_id = Long.parseLong(comment_id);
 
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		s=s.substring(s.indexOf("|")+1,s.length());
 
-			String comment_id = s.substring(0, s.indexOf("|"));
+		String user_id = s.substring(0, s.indexOf("|"));
 
-			this.comment_id = Long.parseLong(comment_id);
+		this.user_id = Long.parseLong(user_id);
 
-			s=s.substring(s.indexOf("|")+1,s.length());
+		s=s.substring(s.indexOf("|")+1,s.length());
 
-			String user_id = s.substring(0, s.indexOf("|"));
+		String comment = s.substring(0, s.indexOf("|"));
 
-			this.user_id = Long.parseLong(user_id);
+		this.comment = comment;
 
-			s=s.substring(s.indexOf("|")+1,s.length());
+		s=s.substring(s.indexOf("|")+1,s.length());
 
-			String comment = s.substring(0, s.indexOf("|"));
+		String user = s.substring(0, s.indexOf("|"));
 
-			this.comment = comment;
+		this.user = user;
 
-			s=s.substring(s.indexOf("|")+1,s.length());
+		s=s.substring(s.indexOf("|")+1,s.length());
 
-			String user = s.substring(0, s.indexOf("|"));
+		String comment_replied = s.substring(0, s.indexOf("|"));
 
-			this.user = user;
-
-			s=s.substring(s.indexOf("|")+1,s.length());
-
-			String comment_replied = s.substring(0, s.indexOf("|"));
-
-			if(comment_replied.length() > 0){
+		if(comment_replied.length() > 0){
 			this.comment_replied = Long.parseLong(comment_replied);
-			}
-			else{
+		}
+		else{
 			this.comment_replied = 0;
-			}
+		}
 
-			s=s.substring(s.indexOf("|")+1,s.length());
+		s=s.substring(s.indexOf("|")+1,s.length());
 
-			String post_commented = s;
+		String post_commented = s;
 
-			if(post_commented.length() > 0){
+		if(post_commented.length() > 0){
 			this.post_commented = Long.parseLong(post_commented);
-			}
-			else{
+		}
+		else{
 			this.post_commented =0;
-			}
+		}
 	}
 
 	public int calculScore(long tempsSysteme){
@@ -105,7 +107,7 @@ public class Comment {
 			}
 			this.comment_score=score;
 
-				return score;
+			return score;
 		}
 	}
 
@@ -118,9 +120,6 @@ public class Comment {
 		this.user=comment.getUser();
 		this.user_id=comment.getUser_id();
 		this.post_commented=comment.getPost_commented();
-
-
-
 	}
 
 
