@@ -1,8 +1,9 @@
 package versionperformante;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,9 +21,14 @@ public class Ordonnanceur {
 	private FileReader filecomment;
 	private BufferedReader bufferedReaderpost;
 	private BufferedReader bufferedReadercomment;
+
+	private FileWriter filesortie;
+	private BufferedWriter bufferedSortie;
 	private Boolean bool1=false;
 	private Boolean bool2=false;
 	private long nbcomm;
+
+	private long pourcent;
 
 
 	public Ordonnanceur(){
@@ -30,18 +36,22 @@ public class Ordonnanceur {
 		currentPost= new Post();
 		currentComment= new Comment();
 		try {
-			filepost= new FileReader("/Users/Jeredentan/Desktop/posts.txt");
-			//filepost= new FileReader("D:/Temp/data/posts.txt");
+			//filepost= new FileReader("/Users/Jeredentan/Desktop/posts.txt");
+			filepost= new FileReader("D:/Temp/data/posts.txt");
 			bufferedReaderpost   = new BufferedReader(filepost);
-			filecomment= new FileReader("/Users/Jeredentan/Desktop/comments.txt");
-			//filecomment= new FileReader("D:/Temp/data/comments.txt");
+			//filecomment= new FileReader("/Users/Jeredentan/Desktop/comments.txt");
+			filecomment= new FileReader("D:/Temp/data/comments.txt");
 			bufferedReadercomment   = new BufferedReader(filecomment);
 
+			filesortie = new FileWriter("D:/Temp/data/sortie.txt");
+			bufferedSortie = new BufferedWriter(filesortie);
 			top3_posts.add(new Post());
 			top3_posts.add(new Post());
 			top3_posts.add(new Post());
+			nbcomm =1;
+			pourcent =1;
 
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -64,6 +74,7 @@ public class Ordonnanceur {
 				Post p = new Post();
 				p.affecter(this.currentPost);
 				Ordonnanceur.postsbis.add(p);
+			//	System.out.println("ajout d'un post a postbis");
 				Ordonnanceur.posts.put(p.getPost_id(),p);
 				// ==> On reparcoure les tableaux de posts et comments pour mettre à jour les scores en fonction du temps écoulé (comparaison temps systeme/dates).
 				changetop3=this.updateScore(true);
@@ -78,110 +89,44 @@ public class Ordonnanceur {
 				changetop3=	this.updateScore(false);
 			}
 			/*System.out.println(d);
-		System.out.println(posts);*/
+			System.out.println(posts);*/
 			if(changetop3==true){
+				java.util.Date da= new java.util.Date(Date);
 
+				try {
+					bufferedSortie.write("\n"+da.toString()+"\n");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				for(int i=0;i<top3_posts.size();i++){
+				try {
+					bufferedSortie.write(top3_posts.get(i).toString());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
+			}
 			}
 
 			if(nbcomm % 10000==0){
 				long t2= System.currentTimeMillis();
 				System.out.println(nbcomm+ "commentaires");
 				System.out.println(t2-t1);
+				//System.out.println("pourcent de post calculer :" + (100*pourcent/nbcomm));
+				System.out.println("taille postsbis "+postsbis.size());
 			}
 			nbcomm=nbcomm+1;
 			// A la fin on sort le top3 des scores
 			// Si il est différent du précédent, on le change dans le fichier text de top3
 		}while(lire(lirepost,lirecommentaire));
-		/*Date da= new Date(Date);
-		System.out.println(da);
-		for(int i=0;i<top3_posts.size();i++){
-		System.out.println(top3_posts.get(i));
-		}*/
+
+
+		System.out.println("fini");
 	}
 
-	/*
-	private ArrayList<Post> chercher_top3(){
-		ArrayList<Post> listtop3 = new ArrayList<Post>();
-		Post top1= new Post();
-		Post top2= new Post();
-		Post top3= new Post();
-		//System.out.println("posts : "+posts);
-		//System.out.println("top3 = "+top3);
 
-		for (HashMap.Entry<Long, Post> entry : posts.entrySet()){
-
-
-			if(post.getPost_score()>top1.getPost_score()){
-				top1=entry.getValue();
-			}else{
-				if(entry.getValue().getPost_score()==top1.getPost_score()){
-					if(entry.getValue().getTs()>top1.getTs()){
-						top1=entry.getValue();
-					}
-
-					if(entry.getValue().getTs()==top1.getTs() ){
-						if(	entry.getValue().getComments_associes().size()>top1.getComments_associes().size()){
-							top1=entry.getValue();
-						}
-
-					}
-
-				}
-			}
-		}
-		for (HashMap.Entry<Long, Post> entry : posts.entrySet()){
-
-
-			if(entry.getValue().getPost_score()>top2.getPost_score() && entry.getValue().getPost_id()!=top1.getPost_id()){
-				top2=entry.getValue();
-			}else{
-				if(entry.getValue().getPost_score()==top2.getPost_score()  && entry.getValue().getPost_id()!=top1.getPost_id()){
-					if(entry.getValue().getTs()>top1.getTs()){
-						top2=entry.getValue();
-					}
-
-					if(entry.getValue().getTs()==top2.getTs() ){
-						if(	entry.getValue().getComments_associes().size()>top2.getComments_associes().size() && entry.getValue().getPost_id()!=top1.getPost_id()){
-							top2=entry.getValue();
-						}
-
-					}
-
-				}
-			}
-		}
-		for (HashMap.Entry<Long, Post> entry : posts.entrySet()){
-
-
-			if(entry.getValue().getPost_score()>top3.getPost_score() && entry.getValue().getPost_id()!=top1.getPost_id() && entry.getValue().getPost_id()!=top2.getPost_id()){
-				top3=entry.getValue();
-			}else{
-				if(entry.getValue().getPost_score()==top3.getPost_score()  && entry.getValue().getPost_id()!=top1.getPost_id() && entry.getValue().getPost_id()!=top2.getPost_id()){
-					if(entry.getValue().getTs()>top1.getTs()){
-						top3=entry.getValue();
-					}
-
-					if(entry.getValue().getTs()==top3.getTs() ){
-						if(	entry.getValue().getComments_associes().size()>top3.getComments_associes().size() && entry.getValue().getPost_id()!=top1.getPost_id() && entry.getValue().getPost_id()!=top2.getPost_id()){
-							top3=entry.getValue();
-						}
-
-					}
-
-				}
-			}
-		}
-
-
-
-		listtop3.add(top1);
-		listtop3.add(top2);
-		listtop3.add(top3);
-		//System.out.println(listtop3);
-
-		return listtop3;
-	}*/
 	private boolean comparertop3(ArrayList<Post> liste){
 
 
@@ -198,7 +143,7 @@ public class Ordonnanceur {
 
 	private void ajouter_commentaire(){
 		long commentreplied;
-		int ligne = 0;
+
 		long postreplied = 0;
 		Comment com = new Comment();
 		com.affecter(this.currentComment);
@@ -212,40 +157,53 @@ public class Ordonnanceur {
 			comments.get(commentreplied).getComments_associes().add(currentComment.getComment_id());
 
 		}else{
-			/*for (HashMap.Entry<Long, Post> entry : posts.entrySet()){
-				postreplied=this.currentComment.getPost_commented();
 
-				if(entry.getValue().getPost_id()==postreplied){
-					entry.getValue().getComments_associes().add(currentComment.getComment_id());
-				}
-			}*/
 			postreplied=this.currentComment.getPost_commented();
 
-			if(nbcomm>240_000 ){
-				System.out.println(postreplied);
-			}
 			posts.get(postreplied).getComments_associes().add(currentComment.getComment_id());
+			posts.get(postreplied).setLastupdate(Date);
+
+			// Recherche du post dans post bis pour le mettre en tete de postbis
+			for(int i =0; i<postsbis.size();i++){
+				if(postsbis.get(i).getPost_id() == postreplied){
+					Post p = new Post();
+					p.setLastupdate(Date);
+					postsbis.remove(i);
+					postsbis.add(0, p);
+				}
+			}
 
 
 		}
 	}
 
-	public void update_top3(ArrayList<Post> top3_post,Post post,int score){
-
+	/**
+	 *
+	 * @param top3_post
+	 * @param post
+	 * @param score
+	 * @return si le top trois a change return true, false sinon
+	 */
+	public boolean update_top3(ArrayList<Post> top3_post,Post post,int score){
+		boolean change = false;
 		if(score>top3_post.get(0).getPost_score()){
 			top3_post.add(0, post);
 			top3_post.remove(3);
+			change = true;
+
 		}else{
 			if(score==top3_post.get(0).getPost_score()){
 				if(post.getTs()>top3_post.get(0).getTs()){
 					top3_post.add(0, post);
 					top3_post.remove(3);
+					change = true;
 				}
 
 				if(post.getTs()==top3_post.get(0).getTs() ){
 					if(	post.getComments_associes().size()>top3_post.get(0).getComments_associes().size()){
 						top3_post.add(0, post);
 						top3_post.remove(3);
+						change = true;
 					}
 
 				}
@@ -254,17 +212,20 @@ public class Ordonnanceur {
 				if(score>top3_post.get(1).getPost_score()){
 					top3_post.add(1, post);
 					top3_post.remove(3);
+					change = true;
 				}else{
 					if(score==top3_post.get(0).getPost_score()){
 						if(post.getTs()>top3_post.get(1).getTs()){
 							top3_post.add(1, post);
 							top3_post.remove(3);
+							change = true;
 						}
 
 						if(post.getTs()==top3_post.get(1).getTs() ){
 							if(	post.getComments_associes().size()>top3_post.get(1).getComments_associes().size()){
 								top3_post.add(1, post);
 								top3_post.remove(3);
+								change = true;
 							}
 
 						}
@@ -273,17 +234,20 @@ public class Ordonnanceur {
 						if(score>top3_post.get(2).getPost_score()){
 							top3_post.add(2, post);
 							top3_post.remove(3);
+							change = true;
 						}else{
 							if(score==top3_post.get(0).getPost_score()){
 								if(post.getTs()>top3_post.get(2).getTs()){
 									top3_post.add(2, post);
 									top3_post.remove(3);
+									change = true;
 								}
 
 								if(post.getTs()==top3_post.get(2).getTs() ){
 									if(	post.getComments_associes().size()>top3_post.get(2).getComments_associes().size()){
 										top3_post.add(2, post);
 										top3_post.remove(3);
+										change = true;
 									}
 
 								}
@@ -295,6 +259,7 @@ public class Ordonnanceur {
 				}
 			}
 		}
+		return change;
 
 	}
 
@@ -303,6 +268,7 @@ public class Ordonnanceur {
 
 	public boolean updateScore(boolean ispost){
 		boolean change = false;
+		boolean aux = false;
 		int scoretop3;
 		long t;
 		int score;
@@ -317,7 +283,8 @@ public class Ordonnanceur {
 		//2 - Cacul du score pour post/commentaire(faire en sorte de pas calculer tt le tps)
 		if(ispost){
 			score=currentPost.calculScore(Date);
-			update_top3(top3_posts,currentPost,score);
+			aux = update_top3(top3_posts,currentPost,score);
+			if(aux){change = true;}
 		}else{
 			Post p = new Post();
 			long id;
@@ -331,7 +298,8 @@ public class Ordonnanceur {
 			}
 			p=posts.get(t);
 			score=p.calculScore(Date);
-			update_top3(top3_posts,p,score);
+			aux=update_top3(top3_posts,p,score);
+			if(aux){change = true;}
 		}
 			//Naif
 		for(int i=0;i<top3_posts.size();i++){
@@ -352,7 +320,8 @@ public class Ordonnanceur {
 					postsbis.remove(p);
 				}
 
-				update_top3(top3_posts,p,score);
+				aux=update_top3(top3_posts,p,score);
+					if(aux){change = true;}
 			}
 		}
 
@@ -360,10 +329,9 @@ public class Ordonnanceur {
 
 
 
-		//3 - Si top 3 pas complet, aller repêcher les posts entrant dans le top3
+		//3 - On calcul les scores des postes qui pouraient rentr� dans le top 3 (ie nbcom*10 > 3iem score)
 
-
-
+		completertop3(change);
 
 
 
@@ -390,7 +358,33 @@ public class Ordonnanceur {
 
 	}
 
+	/**
+	 * Methode servant a chercher dans les posts les candidats a rejoindre le top3 et le cas echeant les y ajouter
+	 */
+	private void completertop3(boolean change){
+		int score3iem = top3_posts.get(2).getPost_score();
+		boolean aux = false;
+		Post post = new Post();
+		for(int i=0;i<postsbis.size();i++){
+			post = postsbis.get(i);
+			if((Date-post.getLastupdate())/86_400_000 < 10){ //post actif
 
+				if(post.getComments_associes().size()*10>=score3iem){
+					post.calculScore(Date);
+					aux = update_top3(top3_posts, post, post.getPost_score());
+						if(aux){change = true;}
+					score3iem = top3_posts.get(2).getPost_score();
+					pourcent++;
+				}
+			}else{
+
+				postsbis.remove(i);
+				//System.out.println("post elev�");
+			}
+
+
+		}
+	}
 
 
 	private boolean postisolder()

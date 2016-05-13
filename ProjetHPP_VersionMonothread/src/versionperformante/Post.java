@@ -8,6 +8,8 @@ import java.util.Date;
 public class Post {
 
 	private long ts;
+	private long lastupdate; // var contenant la date de la derniere modif au post
+
 	private  long post_id;
 	private  long user_id;
 	private  String contenu_post;
@@ -25,7 +27,6 @@ public class Post {
 		String timstamp;
 
 		timstamp = line.substring(0,line.indexOf("|"));
-
 
 		String reste;
 		reste = line.substring(line.indexOf("|")+1,line.length());
@@ -53,12 +54,25 @@ public class Post {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 			Date parsedDate = dateFormat.parse(timstamp);
 			this.ts=parsedDate.getTime();
+			this.lastupdate=ts;
 			// Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
 
 		}catch(Exception e){//this generic but you can control another types of exception
 			System.out.println(e);
 		}
 		//-------\Fin conversion en date
+	}
+
+
+
+	public long getLastupdate() {
+		return lastupdate;
+	}
+
+
+
+	public void setLastupdate(long lastupdate) {
+		this.lastupdate = lastupdate;
 	}
 
 
@@ -161,6 +175,7 @@ public class Post {
 		this.user=currentPost.getUser();
 		this.user_id=currentPost.getUser_id();
 		this.post_score=10;
+		this.lastupdate=currentPost.getLastupdate();
 
 	}
 }
