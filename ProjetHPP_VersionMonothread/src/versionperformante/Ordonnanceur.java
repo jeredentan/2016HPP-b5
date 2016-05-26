@@ -37,13 +37,13 @@ public class Ordonnanceur {
 		currentComment= new Comment();
 		try {
 			//filepost= new FileReader("/Users/Jeredentan/Desktop/posts.txt");
-			filepost= new FileReader("D:/Temp/data/posts.txt");
+			filepost= new FileReader("D:/Documents/data/posts.dat");
 			bufferedReaderpost   = new BufferedReader(filepost);
 			//filecomment= new FileReader("/Users/Jeredentan/Desktop/comments.txt");
-			filecomment= new FileReader("D:/Temp/data/comments.txt");
+			filecomment= new FileReader("D:/Documents/data/comments.dat");
 			bufferedReadercomment   = new BufferedReader(filecomment);
 
-			filesortie = new FileWriter("D:/Temp/data/sortie.txt");
+			filesortie = new FileWriter("D:/Documents/data/sortie.txt");
 			bufferedSortie = new BufferedWriter(filesortie);
 			top3_posts.add(new Post());
 			top3_posts.add(new Post());
@@ -162,6 +162,7 @@ public class Ordonnanceur {
 
 			posts.get(postreplied).getComments_associes().add(currentComment.getComment_id());
 			posts.get(postreplied).setLastupdate(Date);
+			posts.get(postreplied).incrementnbComs();
 
 			// Recherche du post dans post bis pour le mettre en tete de postbis
 			for(int i =0; i<postsbis.size();i++){
@@ -369,7 +370,7 @@ public class Ordonnanceur {
 			post = postsbis.get(i);
 			if((Date-post.getLastupdate())/86_400_000 < 10){ //post actif
 
-				if(post.getComments_associes().size()*10>=score3iem){
+				if(post.getnbComs()*10>=score3iem){
 					post.calculScore(Date);
 					aux = update_top3(top3_posts, post, post.getPost_score());
 						if(aux){change = true;}

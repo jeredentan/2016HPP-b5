@@ -16,6 +16,7 @@ public class Post {
 	private  String user;
 
 	private ArrayList<Long> comments_associes= new ArrayList<Long>();
+	private int nbcoms; //var donnant l'ensemble des coms.
 	private int post_score;
 
 
@@ -63,7 +64,13 @@ public class Post {
 		//-------\Fin conversion en date
 	}
 
+	public int getnbComs(){
+		return this.nbcoms;
+	}
 
+	public void incrementnbComs(){
+		this.nbcoms++;
+	}
 
 	public long getLastupdate() {
 		return lastupdate;
@@ -125,6 +132,7 @@ public class Post {
 
 	public Post() {
 		super();
+		nbcoms =0;
 
 
 	}
@@ -176,6 +184,7 @@ public class Post {
 		this.user_id=currentPost.getUser_id();
 		this.post_score=10;
 		this.lastupdate=currentPost.getLastupdate();
+		this.nbcoms=currentPost.getnbComs();
 
 	}
 }
