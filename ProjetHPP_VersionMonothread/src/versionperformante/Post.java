@@ -55,6 +55,7 @@ public class Post {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 			Date parsedDate = dateFormat.parse(timstamp);
 			this.ts=parsedDate.getTime();
+
 			this.lastupdate=ts;
 			// Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
 

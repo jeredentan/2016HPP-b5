@@ -77,7 +77,10 @@ public class Ordonnanceur {
 			//	System.out.println("ajout d'un post a postbis");
 				Ordonnanceur.posts.put(p.getPost_id(),p);
 				// ==> On reparcoure les tableaux de posts et comments pour mettre à jour les scores en fonction du temps écoulé (comparaison temps systeme/dates).
-				changetop3=this.updateScore(true);
+				changetop3=this.updateScore(true,p);
+				if(posts.size() >= 55){
+					//	System.out.println("debug");
+				}
 			}else{
 				lirepost=false;
 				lirecommentaire=true;
@@ -86,7 +89,7 @@ public class Ordonnanceur {
 				//Si c'est un commentaire, on le rajoute dans le tableau des commentaires et on augmente le score de tous les commentaires et du post associés
 				ajouter_commentaire();
 				//On recalcule les scores
-				changetop3=	this.updateScore(false);
+				changetop3=	this.updateScore(false,currentPost);
 			}
 			/*System.out.println(d);
 			System.out.println(posts);*/
@@ -167,10 +170,11 @@ public class Ordonnanceur {
 			// Recherche du post dans post bis pour le mettre en tete de postbis
 			for(int i =0; i<postsbis.size();i++){
 				if(postsbis.get(i).getPost_id() == postreplied){
-					Post p = new Post();
-					p.setLastupdate(Date);
+					//Post p = new Post();
+					//p = posts.get(postreplied);
+					//p.setLastupdate(Date);
 					postsbis.remove(i);
-					postsbis.add(0, p);
+					postsbis.add(0, posts.get(postreplied));
 				}
 			}
 
@@ -222,7 +226,7 @@ public class Ordonnanceur {
 						}
 
 						if(post.getTs()==top3_post.get(1).getTs() ){
-							if((	post.getComments_associes().size()>top3_post.get(1).getComments_associes().size())&&(post.getPost_id()==top3_post.get(0).getPost_id())){
+							if((post.getComments_associes().size()>top3_post.get(1).getComments_associes().size())&&(post.getPost_id()==top3_post.get(0).getPost_id())){
 								top3_post.add(1, post);
 								top3_post.remove(3);
 								change = true;
@@ -263,29 +267,55 @@ public class Ordonnanceur {
 
 	}
 
+	public boolean majtop3(){
+		boolean changed = false;
+		int scoretop3=0;
+		for(int i=0;i<3;i++){
+			scoretop3=top3_posts.get(i).calculScore(Date);
+			if(scoretop3==0){
+				changed =true;
+			}
+		}
+		for(int j = 0; j<2;j++){
+			for(int i =0; i <2;i++){
+				if(top3_posts.get(i).getPost_score() < top3_posts.get(i+1).getPost_score()){
+					Post p = new Post();
+					Post p2 = new Post();
+					p = top3_posts.get(i);
+					top3_posts.add(i,  top3_posts.get(i+1));
+					top3_posts.remove(i+1);
+					top3_posts.add(i+1,p);
+					top3_posts.remove(i+2);
+					changed = true;
+				}
+			}
+		}
+		return changed;
+	}
 
-
-
-	public boolean updateScore(boolean ispost){
+	public boolean updateScore(boolean ispost,Post post){
 		boolean change = false;
 		boolean aux = false;
 		int scoretop3;
 		long t;
 		int score;
-		Post postcopy = new Post();
-		postcopy.affecter(currentPost);
+
+
 		//1- Mise a� hour top 3 pour virer les obsolètes
+		if(majtop3()){
+			change = true;
+		}/*
 		for(int i=0;i<3;i++){
 			scoretop3=top3_posts.get(i).calculScore(Date);
 			if(scoretop3==0){
 				change =true;
 			}
-		}
+		}*/
 
 		//2 - Cacul du score pour post/commentaire(faire en sorte de pas calculer tt le tps)
 		if(ispost){
 			score=currentPost.calculScore(Date);
-			aux = update_top3(top3_posts,postcopy,score);
+			aux = update_top3(top3_posts,post,score);
 			if(aux){change = true;}
 		}else{
 			Post p = new Post();
@@ -297,9 +327,19 @@ public class Ordonnanceur {
 				id=comment.getComment_replied();
 				comment=comments.get(id);
 				t=comment.getPost_commented();
+
 			}
-			p=posts.get(t);
-			score=p.calculScore(Date);
+			// score = posts.get(t).calculScore(Date);
+			p = posts.get(t);
+			score = p.calculScore(Date);
+			//
+			for(int i=0;i<3;i++){
+				scoretop3=top3_posts.get(i).calculScore(Date);
+				if(scoretop3==0){
+					change =true;
+				}
+			}
+			// score=p.calculScore(Date);
 			aux=update_top3(top3_posts,p,score);
 			if(aux){change = true;}
 		}
@@ -413,12 +453,13 @@ public class Ordonnanceur {
 		String line="";
 		String linecomment = "";
 
+
 		StringBuffer stringBuffer = new StringBuffer();
 		try {
 			if(lirepost){
 				line = bufferedReaderpost.readLine();
 				if(line != null){
-
+					currentPost = new Post();
 					currentPost.loadFromString(line);
 
 				}else{
