@@ -361,8 +361,9 @@ public class Ordonnanceur {
 
 	}
 
+
 	/**
-	 * Methode servant a chercher dans les posts les candidats a rejoindre le top3 et le cas echeant les y ajouter
+	 * Methode servant a chercher dans les posts les candidats a rejoindre le top3 et le cas echeant les y ajouters
 	 */
 	private void completertop3(boolean change){
 		int score3iem = top3_posts.get(2).getPost_score();
