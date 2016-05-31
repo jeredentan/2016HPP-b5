@@ -179,7 +179,6 @@ public class Ordonnanceur {
 	}
 
 	/**
-	 *
 	 * @param top3_post
 	 * @param post
 	 * @param score
@@ -200,8 +199,8 @@ public class Ordonnanceur {
 					change = true;
 				}
 
-				if(post.getTs()==top3_post.get(0).getTs() ){
-					if(	post.getComments_associes().size()>top3_post.get(0).getComments_associes().size()){
+				if((post.getTs()==top3_post.get(0).getTs() )){
+					if((	post.getComments_associes().size()>top3_post.get(0).getComments_associes().size())){
 						top3_post.add(0, post);
 						top3_post.remove(3);
 						change = true;
@@ -215,7 +214,7 @@ public class Ordonnanceur {
 					top3_post.remove(3);
 					change = true;
 				}else{
-					if(score==top3_post.get(0).getPost_score()){
+					if(score==top3_post.get(1).getPost_score()){
 						if(post.getTs()>top3_post.get(1).getTs()){
 							top3_post.add(1, post);
 							top3_post.remove(3);
@@ -223,7 +222,7 @@ public class Ordonnanceur {
 						}
 
 						if(post.getTs()==top3_post.get(1).getTs() ){
-							if(	post.getComments_associes().size()>top3_post.get(1).getComments_associes().size()){
+							if((	post.getComments_associes().size()>top3_post.get(1).getComments_associes().size())&&(post.getPost_id()==top3_post.get(0).getPost_id())){
 								top3_post.add(1, post);
 								top3_post.remove(3);
 								change = true;
@@ -237,7 +236,7 @@ public class Ordonnanceur {
 							top3_post.remove(3);
 							change = true;
 						}else{
-							if(score==top3_post.get(0).getPost_score()){
+							if(score==top3_post.get(2).getPost_score()){
 								if(post.getTs()>top3_post.get(2).getTs()){
 									top3_post.add(2, post);
 									top3_post.remove(3);
@@ -245,7 +244,7 @@ public class Ordonnanceur {
 								}
 
 								if(post.getTs()==top3_post.get(2).getTs() ){
-									if(	post.getComments_associes().size()>top3_post.get(2).getComments_associes().size()){
+									if((post.getComments_associes().size()>top3_post.get(2).getComments_associes().size())&&(post.getPost_id()==top3_post.get(1).getPost_id())&&(post.getPost_id()==top3_post.get(0).getPost_id())){
 										top3_post.add(2, post);
 										top3_post.remove(3);
 										change = true;
@@ -273,7 +272,9 @@ public class Ordonnanceur {
 		int scoretop3;
 		long t;
 		int score;
-		//1- Mise √† hour top 3 pour virer les obsol√®tes
+		Post postcopy = new Post();
+		postcopy.affecter(currentPost);
+		//1- Mise a† hour top 3 pour virer les obsol√®tes
 		for(int i=0;i<3;i++){
 			scoretop3=top3_posts.get(i).calculScore(Date);
 			if(scoretop3==0){
@@ -284,7 +285,7 @@ public class Ordonnanceur {
 		//2 - Cacul du score pour post/commentaire(faire en sorte de pas calculer tt le tps)
 		if(ispost){
 			score=currentPost.calculScore(Date);
-			aux = update_top3(top3_posts,currentPost,score);
+			aux = update_top3(top3_posts,postcopy,score);
 			if(aux){change = true;}
 		}else{
 			Post p = new Post();
@@ -302,7 +303,7 @@ public class Ordonnanceur {
 			aux=update_top3(top3_posts,p,score);
 			if(aux){change = true;}
 		}
-			//Naif
+		/*	//Naif
 		for(int i=0;i<top3_posts.size();i++){
 			if(top3_posts.get(i).getPost_score()==0){
 				change=true;
@@ -325,6 +326,7 @@ public class Ordonnanceur {
 					if(aux){change = true;}
 			}
 		}
+		*/
 
 
 
@@ -380,7 +382,7 @@ public class Ordonnanceur {
 			}else{
 
 				postsbis.remove(i);
-				//System.out.println("post elevÈ");
+
 			}
 
 

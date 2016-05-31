@@ -62,6 +62,7 @@ public class Post {
 			System.out.println(e);
 		}
 		//-------\Fin conversion en date
+		this.post_score =10;
 	}
 
 	public int getnbComs(){
@@ -118,8 +119,9 @@ public class Post {
 
 	@Override
 	public String toString() {
-		return "Post [ts=" + ts + ", post_id=" + post_id + ", user_id=" + user_id + ", contenu_post=" + contenu_post
-				+ ", user=" + user + ", comments_associes=" + comments_associes + ", post_score=" + post_score + "]";
+		//return "Post [ts=" + ts + ", post_id=" + post_id + ", user_id=" + user_id + ", contenu_post=" + contenu_post
+		//		+ ", user=" + user + ", comments_associes=" + comments_associes + ", post_score=" + post_score + "]";
+		return "<"+post_id+","+user_id+","+user+","+post_score+">";
 	}
 
 
