@@ -36,14 +36,15 @@ public class Ordonnanceur {
 		currentPost= new Post();
 		currentComment= new Comment();
 		try {
-			filepost= new FileReader("/Users/Jeredentan/Desktop/posts.txt");
-			//filepost= new FileReader("D:/Documents/data/posts.dat");
+			//filepost= new FileReader("/Users/Jeredentan/Desktop/posts.txt");
+			filepost= new FileReader("D:/Documents/data/posts.dat");
 			bufferedReaderpost   = new BufferedReader(filepost);
-			filecomment= new FileReader("/Users/Jeredentan/Desktop/comments.txt");
-			//filecomment= new FileReader("D:/Documents/data/comments.dat");
+			//filecomment= new FileReader("/Users/Jeredentan/Desktop/comments.txt");
+			filecomment= new FileReader("D:/Documents/data/comments.dat");
 			bufferedReadercomment   = new BufferedReader(filecomment);
 
-			filesortie = new FileWriter("/Users/Jeredentan/Desktop/sortie.txt");
+			//filesortie = new FileWriter("/Users/Jeredentan/Desktop/sortie.txt");
+			filesortie = new FileWriter("D:/Documents/data/sortie.txt");
 			bufferedSortie = new BufferedWriter(filesortie);
 			top3_posts.add(new Post());
 			top3_posts.add(new Post());
@@ -56,7 +57,9 @@ public class Ordonnanceur {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * Methode faissant le traitement des donnees
+	 */
 	public void traitement(){
 		boolean changetop3=false;
 		long t1= System.currentTimeMillis();
@@ -118,7 +121,8 @@ public class Ordonnanceur {
 				System.out.println(nbcomm+ "commentaires");
 				System.out.println(t2-t1);
 				//System.out.println("pourcent de post calculer :" + (100*pourcent/nbcomm));
-				System.out.println("taille postsbis "+postsbis.size());
+				//System.out.println("taille postsbis "+postsbis.size());
+				System.out.println("debit (ligne/s): "+10_000d*1000d/(double)(t2-t1));
 			}
 			nbcomm=nbcomm+1;
 			// A la fin on sort le top3 des scores
@@ -129,21 +133,9 @@ public class Ordonnanceur {
 		System.out.println("fini");
 	}
 
-
-	private boolean comparertop3(ArrayList<Post> liste){
-
-
-		if(liste.get(0).getPost_id()==top3_posts.get(0).getPost_id() && liste.get(1).getPost_id()==this.top3_posts.get(1).getPost_id() && liste.get(2).getPost_id()==this.top3_posts.get(2).getPost_id()){
-			return true;
-		}else{
-
-			top3_posts=liste;
-			return false;
-		}
-	}
-
-
-
+	/**
+	 * Permet d'ajouter le commentaire dans current comment et le place de façon adequate dans les differents tableau
+	 */
 	private void ajouter_commentaire(){
 		long commentreplied;
 
@@ -267,6 +259,10 @@ public class Ordonnanceur {
 
 	}
 
+	/**
+	 * Recalcul et place dans le bon ordre le top 3
+	 * @return true si il a change false sinon
+	 */
 	public boolean majtop3(){
 		boolean changed = false;
 		int scoretop3=0;
@@ -292,7 +288,13 @@ public class Ordonnanceur {
 		}
 		return changed;
 	}
-
+	
+	/**
+	 * methode mettant a jour les score et actualisant le top 3
+	 * @param ispost si la dernière update est un post 
+	 * @param post le dernier post
+	 * @return true si le top 3 a changer false sinon
+	 */
 	public boolean updateScore(boolean ispost,Post post){
 		boolean change = false;
 		boolean aux = false;
@@ -301,17 +303,10 @@ public class Ordonnanceur {
 		int score;
 
 
-		//1- Mise aÂ  hour top 3 pour virer les obsolÃƒÂ¨tes
+		//1- Mise a  jour du top 3 pour virer les obsoletes
 		if(majtop3()){
 			change = true;
-		}/*
-		for(int i=0;i<3;i++){
-			scoretop3=top3_posts.get(i).calculScore(Date);
-			if(scoretop3==0){
-				change =true;
-			}
-		}*/
-
+		}
 		//2 - Cacul du score pour post/commentaire(faire en sorte de pas calculer tt le tps)
 		if(ispost){
 			score=currentPost.calculScore(Date);
@@ -329,44 +324,22 @@ public class Ordonnanceur {
 				t=comment.getPost_commented();
 
 			}
-			// score = posts.get(t).calculScore(Date);
+			
 			p = posts.get(t);
 			score = p.calculScore(Date);
-			//
+			
 			for(int i=0;i<3;i++){
 				scoretop3=top3_posts.get(i).calculScore(Date);
 				if(scoretop3==0){
 					change =true;
 				}
 			}
-			// score=p.calculScore(Date);
+			
 			aux=update_top3(top3_posts,p,score);
 			if(aux){change = true;}
 		}
-		/*	//Naif
-		for(int i=0;i<top3_posts.size();i++){
-			if(top3_posts.get(i).getPost_score()==0){
-				change=true;
-			}
 
-		}
 
-		if(change){
-			Post p= new Post();
-			for (int i=0;i<postsbis.size();i++)
-			{
-
-				p=postsbis.get(i);
-				score=  p.calculScore(Date);
-				if(score==0){
-					postsbis.remove(p);
-				}
-
-				aux=update_top3(top3_posts,p,score);
-					if(aux){change = true;}
-			}
-		}
-		*/
 
 
 
@@ -376,27 +349,6 @@ public class Ordonnanceur {
 
 		completertop3(change);
 
-
-
-		/*
-		int score;
-		ArrayList<Post> top3_post = new ArrayList<Post>();
-		top3_post.add(new Post());
-		top3_post.add(new Post());
-		top3_post.add(new Post());
-		Post p= new Post();
-		for (int i=0;i<postsbis.size();i++)
-		{
-
-			p=postsbis.get(i);
-			score=  p.calculScore(Date);
-			if(score==0){
-				postsbis.remove(p);
-			}
-
-			update_top3(top3_post,p,score);
-		}
-		 */
 		return change;
 
 	}
@@ -430,7 +382,10 @@ public class Ordonnanceur {
 		}
 	}
 
-
+	/**
+	 * Compare le post dans current post et le commentaire dans current comment pour savoir lequel est le plus vieux
+	 * @return
+	 */
 	private boolean postisolder()
 	{
 		if(this.currentPost.getTs()==-1){
@@ -447,7 +402,12 @@ public class Ordonnanceur {
 		}
 	}
 
-
+	/**
+	 * lit un commentaire et ou un fichier depuis les fichiers
+	 * @param lirepost	true si on veux lire un post false sinon
+	 * @param lirecommentaire true si on veux lire un commentaire false sinon
+	 * @return true si il y a des choses a lire false si les dossiers sont vides
+	 */
 	private boolean lire(boolean lirepost,boolean lirecommentaire) {
 		//System.out.println("lire");
 		String line="";
