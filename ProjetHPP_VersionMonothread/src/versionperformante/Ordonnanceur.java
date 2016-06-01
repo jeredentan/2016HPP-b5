@@ -37,14 +37,17 @@ public class Ordonnanceur {
 		currentComment= new Comment();
 		try {
 			//filepost= new FileReader("/Users/Jeredentan/Desktop/posts.txt");
-			filepost= new FileReader("D:/Documents/data/posts.dat");
+			//filepost= new FileReader("D:/Documents/data/posts.dat");
+			filepost= new FileReader("D:/Temp/data/posts.dat");
 			bufferedReaderpost   = new BufferedReader(filepost);
 			//filecomment= new FileReader("/Users/Jeredentan/Desktop/comments.txt");
-			filecomment= new FileReader("D:/Documents/data/comments.dat");
+			//filecomment= new FileReader("D:/Documents/data/comments.dat");
+			filecomment= new FileReader("D:/Temp/data/comments.dat");
 			bufferedReadercomment   = new BufferedReader(filecomment);
 
 			//filesortie = new FileWriter("/Users/Jeredentan/Desktop/sortie.txt");
-			filesortie = new FileWriter("D:/Documents/data/sortie.txt");
+			//filesortie = new FileWriter("D:/Documents/data/sortie.txt");
+			filesortie = new FileWriter("D:/Temp/data/sortie.txt");
 			bufferedSortie = new BufferedWriter(filesortie);
 			top3_posts.add(new Post());
 			top3_posts.add(new Post());
@@ -122,7 +125,7 @@ public class Ordonnanceur {
 				System.out.println(t2-t1);
 				//System.out.println("pourcent de post calculer :" + (100*pourcent/nbcomm));
 				//System.out.println("taille postsbis "+postsbis.size());
-				System.out.println("debit (ligne/s): "+10_000d*1000d/(double)(t2-t1));
+				System.out.println("debit (ligne/s): "+nbcomm*1000d/(double)(t2-t1));
 			}
 			nbcomm=nbcomm+1;
 			// A la fin on sort le top3 des scores
